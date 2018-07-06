@@ -6,7 +6,6 @@ local config = {
 		"UrlAnalysis/UrlAnalysisMgr.lua",
 		"Misc/ApphelperAlmostDoneLogParser.lua",
 		"Misc/almostdone.txt",
-		"Common/b64InLua.lua",
 	}
 }
 
