@@ -21,8 +21,8 @@ local function runDemo_Encode()
 	print(decoded1)
 	print(decoded2)
 
-	encoder:EncodeFile("test", "main.lua")
-	encoder:DecodeFile("test", "main.lua.sherry")
+	-- encoder:EncodeFile("test", "main.lua")
+	-- encoder:DecodeFile("test", "main.lua.sherry")
 end
 
 

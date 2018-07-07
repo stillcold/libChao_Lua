@@ -2,11 +2,15 @@
 local encoder = require "Encode/SheeryEncoder"
 local config = require "Config"
 
-for idx,originalFileName in ipairs(config.encode_map) do
+for idx,originalFileNameItem in ipairs(config.file_encode_config.encode_map) do
 
-	local encodedFileName = originalFileName..config.encode_tail
+	local originalFileName = originalFileNameItem[1]
 
-	encoder:EncodeFile(config.encode_key, originalFileName, encodedFileName, config.encode_len)
+	local encode_version = originalFileNameItem[2]
 
-	encoder:DecodeFile(config.encode_key, encodedFileName, originalFileName, config.encode_len)
+	local encodedFileName = originalFileName..config.file_encode_config.encode_tail
+
+	-- encoder:EncodeFile(config.file_encode_config.encode_key, originalFileName, encodedFileName, config.file_encode_config.encode_len, encode_version)
+
+	encoder:DecodeFile(config.file_encode_config.encode_key, encodedFileName, originalFileName, config.file_encode_config.encode_len, encode_version)
 end
