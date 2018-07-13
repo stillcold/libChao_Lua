@@ -1,15 +1,18 @@
-local UrlAnalysisMgr = require "UrlAnalysis/UrlAnalysisMgr"
-local encoder = require "Encode/SheeryEncoder"
--- In many place, mime just doesn't work!!!
--- I have to use this instead
-local mime = require "Common/b64InLua"
+
 
 local function runDemo_UrlAnalysisMgr( ... )
+	local UrlAnalysisMgr = require "UrlAnalysis/UrlAnalysisMgr"
+
 	local oriServerId2RealServerId, totalCount, mergeCount = UrlAnalysisMgr:AnalysisServerList("https://www.baidu.com")
 	print(oriServerId2RealServerId[1], totalCount, mergeCount, totalCount - mergeCount)
 end
 
 local function runDemo_Encode()
+	local encoder = require "Encode/SheeryEncoder"
+	-- In many place, mime just doesn't work!!!
+	-- I have to use this instead
+	local mime = require "Common/b64InLua"
+
 	encoder:SetKey("test", 100)
 	local encoded1 = encoder:Encode([==[haode long long ago, there is a very dog, it's name is xiaoxiao]==])
 	local encoded2 = encoder:Encode("yoxi")
@@ -25,8 +28,15 @@ local function runDemo_Encode()
 	-- encoder:DecodeFile("test", "main.lua.sherry")
 end
 
+local function runDemo_SimpleLuaSocket()
+	local simpleLuaSocket = require "Net/SimpleLuaSocket"
 
-print(mime.b64("hah"))
+	local socket = simpleLuaSocket:SocketConnect("127.0.0.1", 80)
+	simpleLuaSocket:SocketSend(socket, "hi")
+	print(simpleLuaSocket:SocketRecieve(socket))
+	simpleLuaSocket:SocketClose(socket)
+end
+
 
 -- runDemo_UrlAnalysisMgr()
 runDemo_Encode()
