@@ -4,10 +4,10 @@ local config = {
 		encode_len = 100,
 		encode_tail = ".sherry",
 		encode_map = {
-			-- fileName, encode_algrithm_version
-			{"UrlAnalysis/UrlAnalysisMgr.lua" , 1},
-			{"Misc/ApphelperAlmostDoneLogParser.lua" , 1},
-			{"Misc/almostdone.txt" , 1},
+			-- fileName, encode_algrithm_version, use_binary_encode
+			{"UrlAnalysis/UrlAnalysisMgr.lua" , 1, false},
+			{"Misc/ApphelperAlmostDoneLogParser.lua" , 1, false},
+			{"Misc/almostdone.txt" , 1, false},
 		}
 	}
 	

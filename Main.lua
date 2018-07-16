@@ -24,8 +24,10 @@ local function runDemo_Encode()
 	print(decoded1)
 	print(decoded2)
 
-	-- encoder:EncodeFile("test", "main.lua")
-	-- encoder:DecodeFile("test", "main.lua.sherry")
+	-- encoder:EncodeFileBinary("testPic.gif", "Main.lua")
+	-- encoder:EncodeFileBinary("testPic.gif", "testPic.gif")
+	-- encoder:DecodeBinaryFile("testPic.gif", "testPic.gif.sherry", "testPic.gif.sherry.gif")
+	-- encoder:DecodeBinaryFile("testPic.gif", "Main.lua.sherry", "Main.lua.sherry.lua")
 end
 
 local function runDemo_SimpleLuaSocket()
