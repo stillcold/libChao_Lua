@@ -2,7 +2,7 @@
 
 local FileMgr = {}
 
-function FileMgr:GetAllFileNameInDir(dir)
+function FileMgr:GetAllFileNameInDir(dir, bWithPath)
 	if string.sub(dir, -1) == "/" then
 		dir = string.sub(dir, 1, -2)
 	end
@@ -19,17 +19,66 @@ function FileMgr:GetAllFileNameInDir(dir)
 
 	for line in fh:lines() do
 		--print("raw", line)
-		local time, info, fileName = string.match(line, "(%d%d%d%d/%d%d/%d%d%s+%d%d:%d%d)%s+[^%d^%w]+([%d%w,]+)[^%d^%w]+([%w%d._]+)")
+		local time, info, fileName = string.match(line, "(%d%d%d%d/%d%d/%d%d%s+%d%d:%d%d)%s+[^%d^%w]+([%d%w,]+)[%s]+([^%s]+)")
 		if time and info and fileName then
 
 			--print("matched", time, info, fileName) 
 			if info ~= "DIR" then
 				candidateFileName = dir..fileName
-				if io.open(candidateFileName, "r") then
-					table.insert(fileNameTbl, candidateFileName)
+				local realFile = io.open(candidateFileName, "r")
+				
+				if realFile then
+					realFile:close()
+
+					local outFileName
+					if bWithPath then
+						outFileName = dir..fileName
+					else
+						outFileName = fileName
+					end
+					table.insert(fileNameTbl, outFileName)
 				end
 			end
 		end
+	end
+
+	fh:close()
+
+	return fileNameTbl
+end
+
+function FileMgr:GetAllDirNameInDir(dir, bWithPath)
+	if string.sub(dir, -1) == "/" then
+		dir = string.sub(dir, 1, -2)
+	end
+
+	local fileNameTbl = {}
+	local cmd = "dir "..dir
+	local fh = io.popen(cmd)
+
+	if string.sub(dir, -1) ~= "/" then
+		dir = dir .. "/"
+	end
+
+	local candidateFileName
+
+	for line in fh:lines() do
+		local mattersCharacterIdx = string.find(line, "<DIR>")
+		if mattersCharacterIdx and mattersCharacterIdx > 0 then
+			local mattersCharacters = string.sub(line, mattersCharacterIdx+5)
+			local fileName = string.match(mattersCharacters, "[%s]+([^%s]+)")
+			if fileName then
+
+				if bWithPath then
+					candidateFileName = dir..fileName
+				else
+					candidateFileName = fileName
+				end
+
+				table.insert(fileNameTbl, candidateFileName)
+			end
+		end
+		
 	end
 
 	fh:close()
@@ -65,6 +114,17 @@ function FileMgr:GetFileNameInDirByExtend(dir, extend)
 
 	return fileNameTbl
 
+end
+
+function FileMgr:GetBaseName(orignalName)
+	local baseName,extend = string.match(orignalName, "([^%.]+)%.([^%.]+)")
+	return baseName,extend
+end
+
+function FileMgr:RenameFile(orignalName, newName)
+	local cmd = "ren "..orignalName.." "..newName
+	print(cmd)
+	local fh = io.popen(cmd)
 end
 
 return FileMgr

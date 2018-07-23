@@ -47,13 +47,25 @@ local function runDemo_BigFile_Encode()
 end
 
 local function runDemo_FileMgr()
+
+	local mime = require "Common/b64InLua"
 	local fileMgr = require "FileMgr/WindowsFileMgr"
-	local files = fileMgr:GetFileNameInDirByExtend("./", "lua")
+	local files = fileMgr:GetFileNameInDirByExtend("./", "txt")
+	for k,v in pairs(files) do
+		print(k,v)
+		local baseName,extend = fileMgr:GetBaseName(v)
+		local newNameRaw = mime.b64(baseName)
+		local newName = string.gsub(newNameRaw,"=", "(")
+		fileMgr:RenameFile(v, newName.."."..extend)
+	end
+
+	local files = fileMgr:GetAllDirNameInDir("./")
 	for k,v in pairs(files) do
 		print(k,v)
 	end
+
 end
 
 -- runDemo_UrlAnalysisMgr()
 -- runDemo_Encode()
--- runDemo_FileMgr()
+runDemo_FileMgr()
