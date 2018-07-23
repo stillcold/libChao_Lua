@@ -46,6 +46,14 @@ local function runDemo_BigFile_Encode()
 	-- encoder:DecodeFile("temp_test2.gif")
 end
 
+local function runDemo_FileMgr()
+	local fileMgr = require "FileMgr/WindowsFileMgr"
+	local files = fileMgr:GetFileNameInDirByExtend("./", "lua")
+	for k,v in pairs(files) do
+		print(k,v)
+	end
+end
 
 -- runDemo_UrlAnalysisMgr()
 -- runDemo_Encode()
+-- runDemo_FileMgr()
