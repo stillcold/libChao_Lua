@@ -1,4 +1,5 @@
 /Encode/SheeryEncoder.lua
+/Encode/BigFileEncoder.lua
 /Common/mime.lua
 /Misc/almostdone.txt
 /Misc/ApphelperAlmostDoneLogParser.lua

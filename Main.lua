@@ -40,5 +40,12 @@ local function runDemo_SimpleLuaSocket()
 end
 
 
+local function runDemo_BigFile_Encode()
+	local encoder = require "Encode/BigFileEncoder"
+	-- encoder:EncodeFile("temp_test2.gif")
+	-- encoder:DecodeFile("temp_test2.gif")
+end
+
+
 -- runDemo_UrlAnalysisMgr()
-runDemo_Encode()
+-- runDemo_Encode()
