@@ -18,8 +18,8 @@ function FileMgr:GetAllFileNameInDir(dir, bWithPath)
 	local candidateFileName
 
 	for line in fh:lines() do
-		-- print("raw", line)
-		local time, info, fileName = string.match(line, "(%d%d%d%d/%d%d/%d%d%s+%d%d:%d%d)%s+[^%d^%w]+([%d%w,]+)[%s]+([^%s]+)")
+		-- local time, info, fileName = string.match(line, "(%d%d%d%d/%d%d/%d%d%s+%d%d:%d%d)%s+[^%d^%w]+([%d%w,]+)[%s]+([^%s]+)")
+		local time, info, fileName = string.match(line, "(%d%d%d%d/%d%d/%d%d%s+%d%d:%d%d)%s+[^%d^%w]+([%d%w,]+)[%s]+(.+)")
 		if time and info and fileName then
 
 			--print("matched", time, info, fileName) 
@@ -117,8 +117,22 @@ function FileMgr:GetFileNameInDirByExtend(dir, extend)
 end
 
 function FileMgr:GetBaseName(orignalName)
-	local baseName,extend = string.match(orignalName, "([^%.]+)%.([^%.]+)")
-	return baseName,extend
+
+	local subString = orignalName
+
+	local pointPos = string.find(subString, "%.")
+
+	local cutLen = 0
+	local lastMatch = pointPos
+
+	while pointPos do
+		subString = string.sub(subString, pointPos + 1)
+		cutLen = cutLen + pointPos
+		lastMatch = cutLen
+		pointPos = string.find(subString, "%.")
+	end
+
+	return string.sub(orignalName, 1, lastMatch - 1), string.sub(orignalName, lastMatch + 1)
 end
 
 function FileMgr:RenameFile(dirName, orignalName, newName)

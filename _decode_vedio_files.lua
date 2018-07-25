@@ -20,6 +20,8 @@ for k,v in pairs(fileNames) do
 			encoder:DecodeFile(dirName, v)
 
 			local realName = string.sub(baseName, 4)
+			realName = string.gsub(realName, "%(", "=")
+			realName = string.gsub(realName, "%)", "/")
 			local newNameRaw = mime.unb64(realName)
 			local newName = newNameRaw
 

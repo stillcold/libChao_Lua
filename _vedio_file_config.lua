@@ -1,6 +1,6 @@
 local local_config = {
-	dirName = [[N:\test]],
-	sizeThreshold = 200,
+	dirName = [[G:\www]],
+	sizeThreshold = 50 * 1024 *1024,
 	encodeFlag = "b64",
 }
 

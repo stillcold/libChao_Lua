@@ -20,6 +20,7 @@ for k,v in pairs(fileNames) do
 			encoder:EncodeFile(dirName, v)
 
 			local newNameRaw = mime.b64(baseName)
+			newNameRaw = string.gsub(newNameRaw,"/", ")")
 			local newName = encodeFlag..string.gsub(newNameRaw,"=", "(")
 			fileMgr:RenameFile(dirName, v, newName.."."..extend)
 		end
