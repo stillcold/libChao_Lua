@@ -1,6 +1,6 @@
 -- It can be replaced by lfs
 
-local FileMgr = {}
+local FileMgr = require "FileMgr/FileMgrCommon"
 
 function FileMgr:GetAllFileNameInDir(dir, bWithPath)
 	if string.sub(dir, -1) == "/" then
@@ -18,7 +18,7 @@ function FileMgr:GetAllFileNameInDir(dir, bWithPath)
 	local candidateFileName
 
 	for line in fh:lines() do
-		--print("raw", line)
+		-- print("raw", line)
 		local time, info, fileName = string.match(line, "(%d%d%d%d/%d%d/%d%d%s+%d%d:%d%d)%s+[^%d^%w]+([%d%w,]+)[%s]+([^%s]+)")
 		if time and info and fileName then
 
@@ -121,9 +121,17 @@ function FileMgr:GetBaseName(orignalName)
 	return baseName,extend
 end
 
-function FileMgr:RenameFile(orignalName, newName)
-	local cmd = "ren "..orignalName.." "..newName
-	print(cmd)
+function FileMgr:RenameFile(dirName, orignalName, newName)
+	if dirName and #dirName > 1 then
+		if string.sub(dirName, -1) ~= "\\" then
+			dirName = dirName .. "\\"
+		end
+	else
+		dirName = ""
+	end
+
+	local cmd = [[ren "]]..dirName..orignalName..[[" "]]..newName..[["]]
+	-- print(cmd)
 	local fh = io.popen(cmd)
 end
 

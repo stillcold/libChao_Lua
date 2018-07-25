@@ -42,25 +42,29 @@ end
 
 local function runDemo_BigFile_Encode()
 	local encoder = require "Encode/BigFileEncoder"
-	-- encoder:EncodeFile("temp_test2.gif")
-	-- encoder:DecodeFile("temp_test2.gif")
+	-- encoder:EncodeFile(nil, "RMB_002.png")
+	-- encoder:DecodeFile(nil, "RMB_002.png")
 end
 
 local function runDemo_FileMgr()
 
 	local mime = require "Common/b64InLua"
 	local fileMgr = require "FileMgr/WindowsFileMgr"
-	local files = fileMgr:GetFileNameInDirByExtend("./", "txt")
-	for k,v in pairs(files) do
-		print(k,v)
+	local dirName = [[N:\test]]
+	local fileNames = fileMgr:GetFileNameInDirByExtend(dirName, "png")
+	for k,v in pairs(fileNames) do
+		-- print(k,v)
 		local baseName,extend = fileMgr:GetBaseName(v)
+		local fileSize = fileMgr:GetFileSize(dirName, v)
+		print("size is ", fileSize)
 		local newNameRaw = mime.b64(baseName)
 		local newName = string.gsub(newNameRaw,"=", "(")
-		fileMgr:RenameFile(v, newName.."."..extend)
+		print(baseName, newName)
+		fileMgr:RenameFile(dirName, v, newName.."."..extend)
 	end
 
-	local files = fileMgr:GetAllDirNameInDir("./")
-	for k,v in pairs(files) do
+	local dirNames = fileMgr:GetAllDirNameInDir("./")
+	for k,v in pairs(dirNames) do
 		print(k,v)
 	end
 
@@ -77,4 +81,5 @@ end
 -- runDemo_UrlAnalysisMgr()
 -- runDemo_Encode()
 -- runDemo_FileMgr()
-runDemo_SafeCall()
+-- runDemo_SafeCall()
+-- runDemo_BigFile_Encode()
