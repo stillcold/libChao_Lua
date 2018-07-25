@@ -66,6 +66,15 @@ local function runDemo_FileMgr()
 
 end
 
+local function runDemo_SafeCall()
+	require "Common/safecall"
+	local mime = require "Common/b64InLua"
+
+	local ret = SAFE_CALL(mime.b64, "test")
+	print(ret)
+end
+
 -- runDemo_UrlAnalysisMgr()
 -- runDemo_Encode()
-runDemo_FileMgr()
+-- runDemo_FileMgr()
+runDemo_SafeCall()
