@@ -1,6 +1,8 @@
 /Encode/SheeryEncoder.lua
 /Encode/BigFileEncoder.lua
+/Common/json.lua
 /Common/mime.lua
 /Misc/almostdone.txt
 /Misc/ApphelperAlmostDoneLogParser.lua
 /UrlAnalysis/UrlAnalysisMgr.lua
+/LogAnalysis/BILogReader.lua

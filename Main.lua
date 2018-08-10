@@ -78,8 +78,17 @@ local function runDemo_SafeCall()
 	print(ret)
 end
 
+local function runDemo_BILogReader()
+	local reader = require "LogAnalysis/BILogReader.lua"
+	local contentTbl = reader.readFile("sample.log")
+	for k,v in pairs(contentTbl) do
+		print(k,v)
+	end
+end
+
 -- runDemo_UrlAnalysisMgr()
 -- runDemo_Encode()
 -- runDemo_FileMgr()
 -- runDemo_SafeCall()
 -- runDemo_BigFile_Encode()
+-- runDemo_BILogReader()

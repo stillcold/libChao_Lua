@@ -8,6 +8,8 @@ local config = {
 			{"UrlAnalysis/UrlAnalysisMgr.lua" , 1, false},
 			{"Misc/ApphelperAlmostDoneLogParser.lua" , 1, false},
 			{"Misc/almostdone.txt" , 1, false},
+			{"Common/json.lua" , 1, false},
+			{"LogAnalysis/BILogReader.lua" , 1, false},
 		}
 	}
 	
