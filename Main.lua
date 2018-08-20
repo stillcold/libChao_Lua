@@ -86,9 +86,15 @@ local function runDemo_BILogReader()
 	end
 end
 
+local function runDemo_HuffmanWeightTbl()
+	local huffmanWeightTbl = require "Common/huffmanWeightTbl"
+	huffmanWeightTbl:__Test_Suite()
+end
+
 -- runDemo_UrlAnalysisMgr()
 -- runDemo_Encode()
 -- runDemo_FileMgr()
 -- runDemo_SafeCall()
 -- runDemo_BigFile_Encode()
 -- runDemo_BILogReader()
+runDemo_HuffmanWeightTbl()
