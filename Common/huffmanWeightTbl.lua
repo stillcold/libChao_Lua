@@ -17,6 +17,9 @@ function huffmanWeightTbl:_BuildSimpleHuffmanTree(keyValueTbl)
 
 	table.sort(sortTbl, sortfunction)
 
+	local root = {}
+	root.bIsWeightTree = true
+
 	local nodeCount = #sortTbl
 
 	local weighlessNode = {key = sortTbl[1][1], bIsLeaf = true}
@@ -45,7 +48,9 @@ function huffmanWeightTbl:_BuildSimpleHuffmanTree(keyValueTbl)
 		lastRoundTotalWeight = (sortTbl[i][2] + lastRoundTotalWeight) / orginalTotalWeight
 	end
 
-	return previousNode
+	root.tree = previousNode
+
+	return root
 end
 
 function huffmanWeightTbl:_BuildAdjustableTree(keyValueTbl)
@@ -61,6 +66,9 @@ function huffmanWeightTbl:_BuildAdjustableTree(keyValueTbl)
 	end
 
 	table.sort(sortTbl, sortfunction)
+
+	local root = {}
+	root.bIsWeightTree = true
 
 	local nodeCount = #sortTbl
 
@@ -94,18 +102,20 @@ function huffmanWeightTbl:_BuildAdjustableTree(keyValueTbl)
 		lastRoundTotalWeight = (sortTbl[i][2] + lastRoundTotalWeight)
 	end
 
-	previousNode.treeIndex = treeIndex
-	previousNode.bAdjustableTree = true
-	previousNode.adjustTimes = 0
-	previousNode.totalWeight = lastRoundTotalWeight
-	previousNode.totalCount = nodeCount
+	root.tree = previousNode
 
-	return previousNode
+	root.treeIndex = treeIndex
+	root.bAdjustableTree = true
+	root.adjustTimes = 0
+	root.totalWeight = lastRoundTotalWeight
+	root.totalCount = nodeCount
+
+	return root
 end
 
--- set bAdjustableTree with record many more info
--- in this case, the built tree and can be adjusted easier
--- if you want to adjust the weight value after build the tree, do use it!
+-- Set bAdjustableTree with record many more info
+-- In this case, the built tree and can be adjusted easier
+-- If you want to adjust the weight value after build the tree, do use it!
 function huffmanWeightTbl:BuildHuffmanTree(keyValueTbl, bAdjustableTree)
 	if bAdjustableTree then
 		return self:_BuildAdjustableTree(keyValueTbl)
@@ -114,7 +124,7 @@ function huffmanWeightTbl:BuildHuffmanTree(keyValueTbl, bAdjustableTree)
 	return self:_BuildSimpleHuffmanTree(keyValueTbl)
 end
 
-function huffmanWeightTbl:SelectInHuffmanTree(tree, randomNum)
+function huffmanWeightTbl:_SelectInHuffmanTree(tree, randomNum)
 	if not randomNum then
 		randomNum = math.random()
 		if tree.bAdjustableTree then
@@ -135,25 +145,50 @@ function huffmanWeightTbl:SelectInHuffmanTree(tree, randomNum)
 	return nextNode and nextNode.key or 0
 end
 
+function huffmanWeightTbl:SelectInHuffmanTree(root, randomNum)
+	return self:_SelectInHuffmanTree(root.tree, randomNum)
+end
+
+function huffmanWeightTbl:IsWeightTree(root)
+	if not root then return false end
+	if root.bIsWeightTree then return true end
+end
+
+-- One api for all
+-- If input is not a valid weight tree, it will build a new tree
 -- The tree will not be a huffman tree after adjust
-function huffmanWeightTbl:AdjustWeightTree(tree, key, newWeight)
-	if not tree.bAdjustableTree then return end
+-- In case input is not a tree or a nil value, it returns a tree anyway
+function huffmanWeightTbl:AdjustWeightTree(root, key, newWeight)
+	if not root or not self:IsWeightTree(root) then
+		local tbl = {}
+		tbl[key] = newWeight
+
+		return self:BuildHuffmanTree(tbl, true)
+	end
+
+	-- This is helpless
+	if not root.bAdjustableTree then
+		return root
+	end
+
+	local tree = root.tree
 
 	-- Ajust too mnany times, build a new huffman tree instead
-	if (tree.adjustTimes / tree.totalCount >= 0.5 ) or (tree.totalCount <= 1)  then
-		local oldTree = tree
+	if (root.adjustTimes / root.totalCount >= 0.5 ) or (root.totalCount <= 1)  then
 		local keyValueTbl = {}
-		for k,v in pairs(oldTree.treeIndex) do
+		for k,v in pairs(root.treeIndex) do
 			keyValueTbl[k] = v.originalWeight
 		end
 
 		keyValueTbl[key] = newWeight
 
-		tree = self:_BuildAdjustableTree(keyValueTbl, true)
-		return tree
+		root = self:_BuildAdjustableTree(keyValueTbl, true)
+		return root
 	end
 
-	local targetNode = tree.treeIndex[key]
+	if newWeight < 0 then newWeight = 0 end
+
+	local targetNode = root.treeIndex[key]
 	if not targetNode then
 
 		local newNode = {key = key, bIsLeaf = true, originalWeight = newWeight}
@@ -165,20 +200,14 @@ function huffmanWeightTbl:AdjustWeightTree(tree, key, newWeight)
 		tree[2] = oldTree
 		tree.leftWeight = newWeight
 
-		tree.treeIndex = oldTree.treeIndex
+		root.tree = tree
+		root.treeIndex[key] = newNode
+		root.totalWeight = root.totalWeight + newWeight
+		root.adjustTimes = 1 + root.adjustTimes
+		root.totalCount = root.totalCount + 1
+		root.bAdjustableTree = true
 
-		tree.treeIndex[key] = newNode
-		tree.totalWeight = oldTree.totalWeight + newWeight
-		tree.adjustTimes = 1 + oldTree.adjustTimes
-		tree.totalCount = oldTree.totalCount + 1
-		tree.bAdjustableTree = true
-
-		oldTree.treeIndex = nil
-		oldTree.totalWeight = nil
-		oldTree.totalCount = nil
-		oldTree.adjustTimes = nil
-		oldTree.bAdjustableTree = nil
-		return tree
+		return root
 	end
 
 	local offset = (newWeight - targetNode.originalWeight)
@@ -189,13 +218,26 @@ function huffmanWeightTbl:AdjustWeightTree(tree, key, newWeight)
 
 	parent.leftWeight = newWeight
 
-	tree.totalWeight = tree.totalWeight + offset
-	tree.adjustTimes = 1 + tree.adjustTimes
+	root.totalWeight = root.totalWeight + offset
+	root.adjustTimes = 1 + root.adjustTimes
 
-	return tree
+	return root
 end
 
-function huffmanWeightTbl:ShowHuffmanTree(tree, level)
+function huffmanWeightTbl:AddKeyWeight(root, key, addValue)
+	if not root.bAdjustableTree then return root end
+
+	local targetNode = root.treeIndex[key]
+	if not targetNode then
+		return self:AdjustWeightTree(root, key, addValue)
+	end
+
+	local newWeight = targetNode.originalWeight + addValue
+	return self:AdjustWeightTree(root, key, newWeight)
+end
+
+-- This will not travaerse the root
+function huffmanWeightTbl:_TraverseHuffmanTree(tree, level)
 
 	level = level or 0
 	if tree.bIsLeaf then
@@ -208,10 +250,44 @@ function huffmanWeightTbl:ShowHuffmanTree(tree, level)
 	local left = tree[1]
 	local right = tree[2]
 
-	self:ShowHuffmanTree(left, level + 1)
-	self:ShowHuffmanTree(right, level + 1)
+	self:_TraverseHuffmanTree(left, level + 1)
+	self:_TraverseHuffmanTree(right, level + 1)
 end
 
+function huffmanWeightTbl:ShowHuffmanTree(root)
+	self:_TraverseHuffmanTree(root.tree)
+end
+
+function huffmanWeightTbl:LoadAdjustableWeightTreeFromFile(filePath)
+	local file = io.open(filePath, "rb")
+	if not file then return end
+
+	local tbl = {}
+	for line in file:lines() do
+		local key,value = string.match(line, "([^;]+)(;)([^;]+)")
+		value = value and tonumber(value) or 0
+		tbl[key] = value
+	end
+
+	return self:BuildHuffmanTree(tbl, true)
+
+end
+
+function huffmanWeightTbl:WriteWeightTreeToFile(root, filePath)
+	local file = io.open(filePath, "w")
+	if not file then return end
+
+	if not root.bAdjustableTree then return end
+
+	local treeIndex = root.treeIndex
+	if not treeIndex then return end
+
+	for k,v in pairs(treeIndex) do
+		file:write(k..";"..v)
+	end
+
+	file:close()
+end
 
 function huffmanWeightTbl:__Test_Suite()
 	local tbl = {}
