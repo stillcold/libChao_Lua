@@ -159,6 +159,7 @@ end
 -- The tree will not be a huffman tree after adjust
 -- In case input is not a tree or a nil value, it returns a tree anyway
 function huffmanWeightTbl:AdjustWeightTree(root, key, newWeight)
+	if not key then return root end
 	if not root or not self:IsWeightTree(root) then
 		local tbl = {}
 		tbl[key] = newWeight
@@ -225,6 +226,16 @@ function huffmanWeightTbl:AdjustWeightTree(root, key, newWeight)
 end
 
 function huffmanWeightTbl:AddKeyWeight(root, key, addValue)
+
+	if not key then return end
+
+	if not root or not self:IsWeightTree(root) then
+		local tbl = {}
+		tbl[key] = addValue
+
+		return self:BuildHuffmanTree(tbl, true)
+	end
+
 	if not root.bAdjustableTree then return root end
 
 	local targetNode = root.treeIndex[key]
