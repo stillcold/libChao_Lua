@@ -1,4 +1,4 @@
-
+require "Common/class"
 
 local function runDemo_UrlAnalysisMgr( ... )
 	local UrlAnalysisMgr = require "UrlAnalysis/UrlAnalysisMgr"
@@ -91,10 +91,16 @@ local function runDemo_HuffmanWeightTbl()
 	huffmanWeightTbl:__Test_Suite()
 end
 
+local function runDemo_FactoryMethod()
+	require "DesignPattern/FactoryMethod"
+	FactoryMethodMain()
+end
+
 -- runDemo_UrlAnalysisMgr()
 -- runDemo_Encode()
 -- runDemo_FileMgr()
 -- runDemo_SafeCall()
 -- runDemo_BigFile_Encode()
 -- runDemo_BILogReader()
-runDemo_HuffmanWeightTbl()
+-- runDemo_HuffmanWeightTbl()
+runDemo_FactoryMethod()
