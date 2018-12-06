@@ -2,14 +2,22 @@
 
 -- Sample code:
 -- 
--- local allFiles = RunNativeMethod("dir")
--- for line in allFiles:lines() do
+-- local contentTbl = RunNativeCmd("dir")
+-- for _,line in pairs (contentTbl or {}) do
 -- 	print(line)
 -- end
 
--- This will return a user data which can be access in lua code by lines method,
+-- This will return a table contains the result,
 -- See sample code above for more.
 
-function RunNativeMethod(cmd)
-	return io.popen(cmd)
+function RunNativeCmd(cmd)
+	local fh = io.popen(cmd)
+	local contentTbl = {}
+
+	for line in fh:lines() do
+		table.insert(contentTbl, line)
+	end
+
+	fh:close()
+	return contentTbl
 end
