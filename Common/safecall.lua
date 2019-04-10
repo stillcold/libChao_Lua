@@ -3,6 +3,10 @@
 function SAFE_CALL(func, ...)
     local args = {...}
     local argc = select("#", ...)
+    local ErrorHandler = function(...) 
+        -- todo
+        -- print(...) 
+    end
     local returns = { xpcall(function() return func(unpack(args, 1, argc)) end, ErrorHandler) }
     local Errcode = returns[1]
     table.remove(returns, 1)
