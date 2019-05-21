@@ -160,8 +160,12 @@ end
 -- In case input is not a tree or a nil value, it returns a tree anyway
 function huffmanWeightTbl:AdjustWeightTree(root, key, newWeight)
 	if not key then return root end
+
+	if newWeight < 0 then newWeight = 0 end
+
 	if not root or not self:IsWeightTree(root) then
 		local tbl = {}
+
 		tbl[key] = newWeight
 
 		return self:BuildHuffmanTree(tbl, true)
@@ -186,8 +190,6 @@ function huffmanWeightTbl:AdjustWeightTree(root, key, newWeight)
 		root = self:_BuildAdjustableTree(keyValueTbl, true)
 		return root
 	end
-
-	if newWeight < 0 then newWeight = 0 end
 
 	local targetNode = root.treeIndex[key]
 	if not targetNode then
@@ -231,6 +233,7 @@ function huffmanWeightTbl:AddKeyWeight(root, key, addValue)
 
 	if not root or not self:IsWeightTree(root) then
 		local tbl = {}
+		if addValue < 0 then addValue = 0 end
 		tbl[key] = addValue
 
 		return self:BuildHuffmanTree(tbl, true)
@@ -247,8 +250,16 @@ function huffmanWeightTbl:AddKeyWeight(root, key, addValue)
 	return self:AdjustWeightTree(root, key, newWeight)
 end
 
+function huffmanWeightTbl:GetTreeLength(root)
+	if not root then return end
+
+	return root.totalCount
+end
+
 -- This will not travaerse the root
 function huffmanWeightTbl:_TraverseHuffmanTree(tree, level)
+
+	if not tree then return end
 
 	level = level or 0
 	if tree.bIsLeaf then
@@ -266,6 +277,7 @@ function huffmanWeightTbl:_TraverseHuffmanTree(tree, level)
 end
 
 function huffmanWeightTbl:ShowHuffmanTree(root)
+	if not root then return end
 	self:_TraverseHuffmanTree(root.tree)
 end
 
@@ -294,7 +306,7 @@ function huffmanWeightTbl:WriteWeightTreeToFile(root, filePath)
 	if not treeIndex then return end
 
 	for k,v in pairs(treeIndex) do
-		file:write(k..";"..v)
+		file:write(k..";"..v.originalWeight.."\n")
 	end
 
 	file:close()

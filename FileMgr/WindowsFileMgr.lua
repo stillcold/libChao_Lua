@@ -149,4 +149,10 @@ function FileMgr:RenameFile(dirName, orignalName, newName)
 	local fh = io.popen(cmd)
 end
 
+function FileMgr:DelFile(filePath)
+	local cmd = [[del/f/s/q "]]..filePath..[["]]
+	print(cmd)
+	local fh = io.popen(cmd)
+end
+
 return FileMgr
