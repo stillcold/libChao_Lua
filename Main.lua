@@ -96,6 +96,28 @@ local function runDemo_FactoryMethod()
 	FactoryMethodMain()
 end
 
+local function runDemo_FolderEncode()
+	local encoder = require "Encode/FolderEncoder"
+	local key = "xiaoxiao"
+	local inputDirName = "test/Folder"
+	local includeFilter = nil -- ".txt"
+	local excludeFilter = ".log"
+	local encodeLen = 100
+	local algrithmVersion = 1
+	local outputFileName = nil
+
+	local inputFileName = "test/Folder.sherryd"
+
+	local bEncode = 1
+	if bEncode == 1 then
+		encoder:EncodeFolderBinary(key, inputDirName, includeFilter, excludeFilter, encodeLen, algrithmVersion, outputFileName)
+	else
+		outputFileName = "test/out"
+		encoder:DecodeFolderBinary(key, inputFileName, encodeLen, algrithmVersion, outputFileName)
+	end
+	
+end
+
 -- runDemo_UrlAnalysisMgr()
 -- runDemo_Encode()
 -- runDemo_FileMgr()
@@ -103,4 +125,5 @@ end
 -- runDemo_BigFile_Encode()
 -- runDemo_BILogReader()
 -- runDemo_HuffmanWeightTbl()
-runDemo_FactoryMethod()
+-- runDemo_FactoryMethod()
+runDemo_FolderEncode()

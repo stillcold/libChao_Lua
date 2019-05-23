@@ -7,7 +7,7 @@ local config = {
 			-- fileName, encode_algrithm_version, use_binary_encode
 			{"UrlAnalysis/UrlAnalysisMgr.lua" , 1, false},
 			{"Misc/ApphelperAlmostDoneLogParser.lua" , 1, false},
-			{"Misc/almostdone.txt" , 1, false},
+			{"Misc/almostdone.txt" , 1, true},
 			{"Common/json.lua" , 1, false},
 			{"LogAnalysis/BILogReader.lua" , 1, false},
 		}

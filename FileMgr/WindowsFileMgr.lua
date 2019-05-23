@@ -7,9 +7,13 @@ function FileMgr:GetAllFileNameInDir(dir, bWithPath)
 		dir = string.sub(dir, 1, -2)
 	end
 
+	dir = string.gsub(dir, "/", "\\")
+
 	local fileNameTbl = {}
 	local cmd = "dir "..dir
 	local fh = io.popen(cmd)
+
+	dir = string.gsub(dir, "\\", "/")
 
 	if string.sub(dir, -1) ~= "/" then
 		dir = dir .. "/"
@@ -47,14 +51,19 @@ function FileMgr:GetAllFileNameInDir(dir, bWithPath)
 	return fileNameTbl
 end
 
-function FileMgr:GetAllDirNameInDir(dir, bWithPath)
+-- bSkipFakeSubFolder -> 是否跳过 .. 和 . 这样的 *伪* 子文件夹
+function FileMgr:GetAllDirNameInDir(dir, bWithPath, bSkipFakeSubFolder)
 	if string.sub(dir, -1) == "/" then
 		dir = string.sub(dir, 1, -2)
 	end
 
 	local fileNameTbl = {}
+
+	dir = string.gsub(dir, "/", "\\")
 	local cmd = "dir "..dir
 	local fh = io.popen(cmd)
+
+	dir = string.gsub(dir, "\\", "/")
 
 	if string.sub(dir, -1) ~= "/" then
 		dir = dir .. "/"
@@ -75,7 +84,10 @@ function FileMgr:GetAllDirNameInDir(dir, bWithPath)
 					candidateFileName = fileName
 				end
 
-				table.insert(fileNameTbl, candidateFileName)
+				if not bSkipFakeSubFolder or string.sub(fileName, -1) ~= "." then
+					table.insert(fileNameTbl, candidateFileName)
+				end
+				
 			end
 		end
 		
@@ -153,6 +165,17 @@ function FileMgr:DelFile(filePath)
 	local cmd = [[del/f/s/q "]]..filePath..[["]]
 	print(cmd)
 	local fh = io.popen(cmd)
+end
+
+function FileMgr:CreateFolder(filePath)
+	local cmd = [[mkdir "]]..filePath..[["]]
+	-- print(cmd)
+	local fh = io.popen(cmd)
+	-- 必须保留这里的迭代,不然可能没等这个命令执行完,逻辑就去了其他地方,等着这个命令结果的地方就会坑
+	-- 保留迭代的话,会强制逻辑等待这个命令的执行结果再去执行其他逻辑
+	for line in fh:lines() do
+		-- print(fh)
+	end
 end
 
 return FileMgr
